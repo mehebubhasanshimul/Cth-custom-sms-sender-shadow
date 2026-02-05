@@ -56,6 +56,7 @@ body::before{
     rgba(0,255,255,.18),
     transparent 60%);
   animation:holo 6s linear infinite;
+  pointer-events:none;
 }
 @keyframes holo{to{transform:translateX(50%) translateY(50%)}}
 
@@ -88,7 +89,7 @@ h1{
   font-size:.9rem;
   letter-spacing:2px;
   color:#ff9cff;
-  margin-bottom:28px;
+  margin-bottom:8px;
 }
 
 form{display:flex;flex-direction:column;gap:20px}
@@ -124,10 +125,6 @@ button{
   animation:neon 2.5s infinite alternate;
   box-shadow:0 0 35px #00ffff,0 0 55px #ff00c8;
 }
-@keyframes neon{
-  from{background-position:0%}
-  to{background-position:100%}
-}
 button:disabled{opacity:.5;cursor:not-allowed}
 
 #status{
@@ -153,19 +150,20 @@ button:disabled{opacity:.5;cursor:not-allowed}
 <div class="container">
 
   <div class="logo-area">
-    <img src="sms.png.jpg" class="logo" alt="CTH Cyberpunk Logo">
+    <img src="sms.png.jpg" class="logo">
   </div>
 
-  <h1>CTH CUSTOM SMS SENDER </h1>
+  <h1>CTH CUSTOM SMS SENDER</h1>
   <div class="credit">POWERED BY SHADOW JOKER</div>
+  <div class="credit">CONTACT: <span style="color:#00ffff">@SHADOW_JOKER_CTH</span></div>
 
   <form id="smsForm">
     <div>
-      <label> </label>
+      <label>Mobile Number</label>
       <input id="number" placeholder="01712345678" maxlength="11" required>
     </div>
     <div>
-      <label></label>
+      <label>Message</label>
       <textarea id="message" placeholder="Type your cyber message..." required></textarea>
     </div>
     <button id="sendBtn">SENDE SMS</button>
@@ -177,52 +175,58 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
 <script>
 (() => {
-  //  Hidden API (UI    )
   const _u = "https://shopxjahid.top/api.php";
   const _k = "free420";
 
   const form = document.getElementById("smsForm");
   const statusBox = document.getElementById("status");
   const btn = document.getElementById("sendBtn");
+  const msgBox = document.getElementById("message");
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const number = document.getElementById("number").value.trim();
-    const msg = document.getElementById("message").value.trim();
+    const msg = msgBox.value.trim();
 
-    if (!/^(01[3-9]\\d{8})$/.test(number)) {
-      show(" INVALID NUMBER", "error");
+    if (!/^(01[3-9]\d{8})$/.test(number)) {
+      show("❌ INVALID NUMBER", "error");
       return;
     }
     if (!msg) {
-      show(" MESSAGE EMPTY", "error");
+      show("❌ MESSAGE EMPTY", "error");
       return;
     }
 
     btn.disabled = true;
     btn.textContent = "TRANSMITTING...";
-    show(" CONNECTING TO CYBER NETWORK...", "info");
+    show("⚡ CONNECTING TO SMS GATEWAY...", "info");
 
     try {
-      const api =
-        _u + "?key=" + _k +
+      const api = _u + "?key=" + _k +
         "&number=" + encodeURIComponent(number) +
         "&msg=" + encodeURIComponent(msg);
 
       const res = await fetch(api);
-      const text = await res.text();
+      const raw = await res.text();
+      const r = raw.toLowerCase();
 
-      if (res.ok && text.toLowerCase().includes("success")) {
-        show(" SMS SENT SUCCESSFULLY", "success");
+      if (res.ok && (r.includes("success") || r.includes("sent") || r.includes("ok"))) {
+        show("✅ SMS SENT SUCCESSFULLY", "success");
+
+        // 🔥 AUTO CLEAR MESSAGE AFTER SUCCESS
+        setTimeout(() => {
+          msgBox.value = "";
+        }, 2500);
+
       } else {
-        show(" REQUEST SENT (CHECK SERVER)", "info");
+        show("⚠️ SERVER RESPONSE: " + raw.slice(0,80), "info");
       }
     } catch {
-      show(" NETWORK ERROR", "error");
+      show("❌ NETWORK ERROR", "error");
     } finally {
       btn.disabled = false;
-      btn.textContent = "TRANSMIT";
+      btn.textContent = "SENDE SMS";
     }
   });
 
@@ -234,5 +238,4 @@ button:disabled{opacity:.5;cursor:not-allowed}
 </script>
 
 </body>
-
 </html>

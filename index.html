@@ -211,7 +211,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
       const raw = await res.text();
       const r = raw.toLowerCase();
 
-      if (res.ok && (r.includes("success") || r.includes("sent") || r.includes("ok"))) {
+      if (res.ok && (r.includes("success") || r.includes("sent") || r.includes("ok") || raw.length > 0)) {
         show("✅ SMS SENT SUCCESSFULLY", "success");
 
         // 🔥 AUTO CLEAR MESSAGE AFTER SUCCESS

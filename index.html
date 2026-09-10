@@ -175,13 +175,15 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
 <script>
 (() => {
-  const _u = "https://shopxjahid.top/api.php";
-  const _k = "free420";
+  const _u = "https://alnayeem.top/Custom-Sms/api.php";
 
   const form = document.getElementById("smsForm");
   const statusBox = document.getElementById("status");
   const btn = document.getElementById("sendBtn");
   const msgBox = document.getElementById("message");
+
+  // Helper delay for simulation steps
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -200,18 +202,25 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
     btn.disabled = true;
     btn.textContent = "TRANSMITTING...";
-    show("⚡ CONNECTING TO SMS GATEWAY...", "info");
+
+    // 🚀 SMS Transmission Simulation Sequence
+    show("⚡ [1/3] Establishing Secure Tunnel...", "info");
+    await delay(600);
+    show("🔒 [2/3] Bypassing Gateway Firewall...", "info");
+    await delay(600);
+    show("📡 [3/3] Pumping Packet to Target Node...", "info");
 
     try {
-      const api = _u + "?key=" + _k +
-        "&number=" + encodeURIComponent(number) +
+      const api = _u + "?number=" + encodeURIComponent(number) +
         "&msg=" + encodeURIComponent(msg);
 
       const res = await fetch(api);
       const raw = await res.text();
       const r = raw.toLowerCase();
 
-      if (res.ok && (r.includes("success") || r.includes("sent") || r.includes("ok") || raw.length > 0)) {
+      await delay(400);
+
+      if (res.ok && (r.includes("success") || r.includes("sent") || r.includes("ok") || raw.trim().length > 0)) {
         show("✅ SMS SENT SUCCESSFULLY", "success");
 
         // 🔥 AUTO CLEAR MESSAGE AFTER SUCCESS
@@ -220,7 +229,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
         }, 2500);
 
       } else {
-        show("⚠️ SERVER RESPONSE: " + raw.slice(0,80), "info");
+        show("⚠️ SERVER RESPONSE: " + (raw ? raw.slice(0,80) : "OK"), "info");
       }
     } catch {
       show("❌ NETWORK ERROR", "error");
